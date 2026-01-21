@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2025
+// Copyright (c) 2026 Fabian Chong
 // SPDX-License-Identifier: MPL-2.0
 
 package provider
@@ -19,9 +19,6 @@ import (
 
 // Ensure ScaffoldingProvider satisfies various provider interfaces.
 var _ provider.Provider = &ScaffoldingProvider{}
-var _ provider.ProviderWithFunctions = &ScaffoldingProvider{}
-var _ provider.ProviderWithEphemeralResources = &ScaffoldingProvider{}
-var _ provider.ProviderWithActions = &ScaffoldingProvider{}
 
 // ScaffoldingProvider defines the provider implementation.
 type ScaffoldingProvider struct {
@@ -37,7 +34,7 @@ type ScaffoldingProviderModel struct {
 }
 
 func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
+	resp.TypeName = "iampolicysplitter"
 	resp.Version = p.version
 }
 
@@ -71,33 +68,25 @@ func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.Config
 }
 
 func (p *ScaffoldingProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
-		NewExampleResource,
-	}
+	return []func() resource.Resource{}
 }
 
 func (p *ScaffoldingProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
-	return []func() ephemeral.EphemeralResource{
-		NewExampleEphemeralResource,
-	}
+	return []func() ephemeral.EphemeralResource{}
 }
 
 func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewIamPolicySplitterDataSource,
 	}
 }
 
 func (p *ScaffoldingProvider) Functions(ctx context.Context) []func() function.Function {
-	return []func() function.Function{
-		NewExampleFunction,
-	}
+	return []func() function.Function{}
 }
 
 func (p *ScaffoldingProvider) Actions(ctx context.Context) []func() action.Action {
-	return []func() action.Action{
-		NewExampleAction,
-	}
+	return []func() action.Action{}
 }
 
 func New(version string) func() provider.Provider {

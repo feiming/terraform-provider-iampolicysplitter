@@ -1,4 +1,4 @@
-// Copyright IBM Corp. 2021, 2025
+// Copyright (c) 2026 Fabian Chong
 // SPDX-License-Identifier: MPL-2.0
 
 //go:build generate

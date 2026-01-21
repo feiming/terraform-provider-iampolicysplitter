@@ -1,18 +1,23 @@
-# Terraform Provider Scaffolding (Terraform Plugin Framework)
+# Terraform Provider IAM Policy Splitter
 
-_This template repository is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework). The template repository built on the [Terraform Plugin SDK](https://github.com/hashicorp/terraform-plugin-sdk) can be found at [terraform-provider-scaffolding](https://github.com/hashicorp/terraform-provider-scaffolding). See [Which SDK Should I Use?](https://developer.hashicorp.com/terraform/plugin/framework-benefits) in the Terraform documentation for additional information._
+A Terraform provider that splits IAM policies by statements and rearranges them to fit within AWS IAM policy character limits.
 
-This repository is a *template* for a [Terraform](https://www.terraform.io) provider. It is intended as a starting point for creating Terraform providers, containing:
+This provider is built on the [Terraform Plugin Framework](https://github.com/hashicorp/terraform-plugin-framework).
 
-- A resource and a data source (`internal/provider/`),
-- Examples (`examples/`) and generated documentation (`docs/`),
-- Miscellaneous meta files.
+## Features
 
-These files contain boilerplate code that you will need to edit to create your own Terraform provider. Tutorials for creating Terraform providers can be found on the [HashiCorp Developer](https://developer.hashicorp.com/terraform/tutorials/providers-plugin-framework) platform. _Terraform Plugin Framework specific guides are titled accordingly._
+- **Splits IAM policies by statements**: Automatically extracts individual statements from an IAM policy
+- **Character counting**: Accurately counts characters for each statement and policy
+- **Bin-packing algorithm**: Uses first-fit decreasing algorithm to efficiently group statements into multiple policies
+- **Configurable limits**: Supports both managed policy (6,144 chars) and inline policy (2,048 chars) limits
 
-Please see the [GitHub template repository documentation](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for how to create a new repository from this template on GitHub.
+## Use Cases
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://developer.hashicorp.com/terraform/registry/providers/publishing) so that others can use it.
+When you have a large IAM policy that exceeds AWS limits:
+- **Managed policies**: Maximum 6,144 characters
+- **Inline policies**: Maximum 2,048 characters
+
+This provider helps you automatically split large policies into multiple smaller policies that comply with AWS limits.
 
 ## Requirements
 
@@ -45,7 +50,61 @@ Then commit the changes to `go.mod` and `go.sum`.
 
 ## Using the provider
 
-Fill this in for each provider
+### Basic Example
+
+```hcl
+data "iampolicysplitter_iam_policy_splitter" "example" {
+  policy_json = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject"]
+        Resource = "arn:aws:s3:::example-bucket/*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket"]
+        Resource = "arn:aws:s3:::example-bucket"
+      }
+    ]
+  })
+  max_chars = 2048  # Inline policy limit
+}
+
+output "split_policies" {
+  value = data.iampolicysplitter_iam_policy_splitter.example.split_policies
+}
+```
+
+### Data Source: `iampolicysplitter_iam_policy_splitter`
+
+#### Arguments
+
+- `policy_json` (Required, String): The IAM policy JSON string to split
+- `max_chars` (Optional, Number): Maximum number of characters allowed per policy. Defaults to 6144 (managed policy limit)
+
+#### Attributes
+
+- `split_policies` (Computed, List of Strings): List of split policy JSON strings, each within the character limit
+- `id` (Computed, String): Identifier for the data source
+
+### Example: Using Split Policies
+
+```hcl
+data "iampolicysplitter_iam_policy_splitter" "large_policy" {
+  policy_json = var.large_iam_policy_json
+  max_chars   = 6144
+}
+
+# Create multiple managed policies from the split
+resource "aws_iam_policy" "split_policies" {
+  count = length(data.iampolicysplitter_iam_policy_splitter.large_policy.split_policies)
+  
+  name   = "policy-${count.index + 1}"
+  policy = data.iampolicysplitter_iam_policy_splitter.large_policy.split_policies[count.index]
+}
+```
 
 ## Developing the Provider
 
