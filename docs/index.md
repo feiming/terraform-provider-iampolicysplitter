@@ -18,6 +18,15 @@ The provider uses a bin-packing algorithm to efficiently group policy statements
 ## Example Usage
 
 ```terraform
+terraform {
+  required_providers {
+    iampolicysplitter = {
+      source  = "feiming/iampolicysplitter"
+      version = "~> 0.0.2"
+    }
+  }
+}
+
 provider "iampolicysplitter" {
   # no provider-specific config
 }
