@@ -39,7 +39,7 @@ func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.Metadat
 func (p *ScaffoldingProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "The IAM Policy Splitter provider helps split large IAM policies into smaller policies that fit within AWS character limits.",
-		Attributes: map[string]schema.Attribute{},
+		Attributes:          map[string]schema.Attribute{},
 	}
 }
 
