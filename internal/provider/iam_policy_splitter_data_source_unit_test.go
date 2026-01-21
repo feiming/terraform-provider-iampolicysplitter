@@ -20,18 +20,18 @@ func TestPackStatements(t *testing.T) {
 		Version: "2012-10-17",
 		Statement: []IAMPolicyStatement{
 			{
-				Effect: "Allow",
-				Action: []string{"s3:GetObject"},
+				Effect:   "Allow",
+				Action:   []string{"s3:GetObject"},
 				Resource: "arn:aws:s3:::bucket1/*",
 			},
 			{
-				Effect: "Allow",
-				Action: []string{"s3:PutObject"},
+				Effect:   "Allow",
+				Action:   []string{"s3:PutObject"},
 				Resource: "arn:aws:s3:::bucket2/*",
 			},
 			{
-				Effect: "Allow",
-				Action: []string{"s3:DeleteObject"},
+				Effect:   "Allow",
+				Action:   []string{"s3:DeleteObject"},
 				Resource: "arn:aws:s3:::bucket3/*",
 			},
 		},

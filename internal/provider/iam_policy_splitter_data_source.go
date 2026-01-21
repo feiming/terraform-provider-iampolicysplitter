@@ -30,20 +30,20 @@ type IamPolicySplitterDataSource struct {
 
 // IamPolicySplitterDataSourceModel describes the data source data model.
 type IamPolicySplitterDataSourceModel struct {
-	PolicyJson   types.String `tfsdk:"policy_json"`
-	MaxChars     types.Int64  `tfsdk:"max_chars"`
-	SplitPolicies types.List  `tfsdk:"split_policies"`
-	Id           types.String `tfsdk:"id"`
+	PolicyJson    types.String `tfsdk:"policy_json"`
+	MaxChars      types.Int64  `tfsdk:"max_chars"`
+	SplitPolicies types.List   `tfsdk:"split_policies"`
+	Id            types.String `tfsdk:"id"`
 }
 
-// IAMPolicy represents an AWS IAM policy structure
+// IAMPolicy represents an AWS IAM policy structure.
 type IAMPolicy struct {
-	Version   string                 `json:"Version"`
-	Statement []IAMPolicyStatement   `json:"Statement"`
-	Id        *string                `json:"Id,omitempty"`
+	Version   string               `json:"Version"`
+	Statement []IAMPolicyStatement `json:"Statement"`
+	Id        *string              `json:"Id,omitempty"`
 }
 
-// IAMPolicyStatement represents a single IAM policy statement
+// IAMPolicyStatement represents a single IAM policy statement.
 type IAMPolicyStatement struct {
 	Sid          *string                `json:"Sid,omitempty"`
 	Effect       string                 `json:"Effect"`
@@ -56,7 +56,7 @@ type IAMPolicyStatement struct {
 	Condition    map[string]interface{} `json:"Condition,omitempty"`
 }
 
-// StatementWithSize wraps a statement with its character count
+// StatementWithSize wraps a statement with its character count.
 type StatementWithSize struct {
 	Statement IAMPolicyStatement
 	Size      int
@@ -250,7 +250,7 @@ func (d *IamPolicySplitterDataSource) packStatements(ctx context.Context, origin
 
 	// Track which statements are in which policy
 	type policyBin struct {
-		statements []IAMPolicyStatement
+		statements  []IAMPolicyStatement
 		currentSize int
 	}
 
