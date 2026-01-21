@@ -47,6 +47,7 @@ jobs:
         with:
           terraform_wrapper: false
       - run: make generate
+      - run: git diff
       - name: git diff
         run: |
           git diff --compact-summary --exit-code || \
